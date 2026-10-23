@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonora - Admin Monitoring &amp; Music Management Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/neumorphism.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+<body>
+
+  <header class="admin-navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <img src="{{ url_for('static', filename='images/sonora.png') }}" alt="Sonora Logo" class="nav-logo-img">
+        <div class="brand-text">
+          <span class="brand-name">SONORA</span>
+          <span class="brand-sub">Admin Console</span>
+        </div>
+      </div>
+
+      <div class="admin-nav-actions">
+        <a href="/dashboard" class="neu-btn btn-sm">Switch to User View</a>
+        <a href="/logout" class="neu-btn neu-btn-icon" title="Sign Out">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+
+    <section class="kpi-grid">
+      <div class="kpi-card neu-card">
+        <div class="kpi-icon-box neu-card-inset">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#E09F3E" fill="none" stroke-width="2">
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Catalog Songs</span>
+          <span class="kpi-value" id="kpiTotalSongs">{{ metrics.total_songs }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card neu-card">
+        <div class="kpi-icon-box neu-card-inset">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#E09F3E" fill="none" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Active Users</span>
+          <span class="kpi-value" id="kpiTotalUsers">{{ metrics.total_users }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card neu-card">
+        <div class="kpi-icon-box neu-card-inset">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#E09F3E" fill="none" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Playlists Created</span>
+          <span class="kpi-value" id="kpiTotalPlaylists">{{ metrics.total_playlists }}</span>
+        </div>
+      </div>
+
+      <div class="kpi-card neu-card">
+        <div class="kpi-icon-box neu-card-inset">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#E09F3E" fill="none" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Total Stream Plays</span>
+          <span class="kpi-value" id="kpiTotalPlays">{{ metrics.total_plays }}</span>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="admin-controls-card neu-card">
+      <div class="controls-header">
+        <div>
+          <h2>Music Catalog Management</h2>
+          <p class="subtitle">Publish new tracks, update metadata, monitor play counts, or remove songs.</p>
+        </div>
+        <button class="neu-btn neu-btn-amber" id="btnOpenPublishModal">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Publish New Music</span>
+        </button>
+      </div>
+
+      <div class="admin-search-row">
+        <input type="text" id="adminCatalogSearch" class="neu-input" placeholder="Filter songs by title, artist, or genre...">
+      </div>
+
+      <div class="admin-table-wrapper">
+        <table class="neu-table" id="adminSongsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Artist</th>
+              <th>Album</th>
+              <th>Genre</th>
+              <th>Duration</th>
+              <th>Year</th>
+              <th>Plays</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminSongsTableBody">
+
+            <tr><td colspan="9" class="loading-state">Loading catalog records...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="analysis-grid">
+      <div class="analysis-card neu-card">
+        <h3>Top Streamed Tracks</h3>
+        <div class="top-songs-list" id="topSongsContainer">
+          {% for s in metrics.top_songs %}
+          <div class="top-song-item">
+            <div>
+              <strong>{{ s.title }}</strong><br>
+              <small>{{ s.artist }} &bull; {{ s.genre }}</small>
+            </div>
+            <span class="neu-badge neu-badge-amber">{{ s.play_count }} plays</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="analysis-card neu-card">
+        <h3>Genre Distribution</h3>
+        <div class="genre-stats-list">
+          {% for g in metrics.genres %}
+          <div class="genre-stat-item">
+            <span>{{ g.genre }}</span>
+            <span class="neu-badge neu-badge-burgundy">{{ g.count }} tracks</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="admin-modal-overlay" id="publishModal">
+    <div class="admin-modal-box neu-card modal-wide">
+      <div class="admin-modal-header">
+        <div class="neu-badge neu-badge-amber">Publish Music</div>
+        <button class="close-modal-btn" id="closePublishModal">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <h3>Publish Song to Sonora Catalog</h3>
+        <p>Add a new track. The audio synthesizer will automatically generate audio if URL is omitted.</p>
+
+        <form id="publishSongForm" class="auth-form form-grid">
+          <div class="form-group">
+            <label class="neu-label" for="pubTitle">Song Title *</label>
+            <input type="text" id="pubTitle" class="neu-input" placeholder="e.g. Celestial Twilight" required>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="pubArtist">Artist Name *</label>
+            <input type="text" id="pubArtist" class="neu-input" placeholder="e.g. Luna Wave" required>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="pubAlbum">Album Name</label>
+            <input type="text" id="pubAlbum" class="neu-input" placeholder="e.g. Infinite Sky">
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="pubGenre">Genre *</label>
+            <select id="pubGenre" class="neu-select" required>
+              <option value="Lo-Fi">Lo-Fi</option>
+              <option value="Synthwave">Synthwave</option>
+              <option value="Jazz">Jazz</option>
+              <option value="Acoustic">Acoustic</option>
+              <option value="Electronic">Electronic</option>
+              <option value="Classical">Classical</option>
+              <option value="Blues">Blues</option>
+              <option value="Ambient">Ambient</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="pubDuration">Duration (Seconds) *</label>
+            <input type="number" id="pubDuration" class="neu-input" placeholder="e.g. 195" min="10" max="1200" required>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="pubYear">Release Year</label>
+            <input type="number" id="pubYear" class="neu-input" value="2024" min="1900" max="2099">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="neu-label" for="pubAudioUrl">Audio URL (Optional MP3 / OGG)</label>
+            <input type="url" id="pubAudioUrl" class="neu-input" placeholder="https://... (Leave blank for built-in Web Audio Synth)">
+          </div>
+
+          <div class="form-group full-width">
+            <button type="submit" class="neu-btn neu-btn-primary btn-block">Publish Song to Library</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+        
+  <div class="admin-modal-overlay" id="editSongModal">
+    <div class="admin-modal-box neu-card modal-wide">
+      <div class="admin-modal-header">
+        <div class="neu-badge neu-badge-amber">Edit Metadata</div>
+        <button class="close-modal-btn" id="closeEditModal">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <h3>Edit Song Metadata</h3>
+        <input type="hidden" id="editSongId">
+
+        <form id="editSongForm" class="auth-form form-grid">
+          <div class="form-group">
+            <label class="neu-label" for="editTitle">Song Title *</label>
+            <input type="text" id="editTitle" class="neu-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="editArtist">Artist *</label>
+            <input type="text" id="editArtist" class="neu-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="editAlbum">Album</label>
+            <input type="text" id="editAlbum" class="neu-input">
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="editGenre">Genre *</label>
+            <select id="editGenre" class="neu-select" required>
+              <option value="Lo-Fi">Lo-Fi</option>
+              <option value="Synthwave">Synthwave</option>
+              <option value="Jazz">Jazz</option>
+              <option value="Acoustic">Acoustic</option>
+              <option value="Electronic">Electronic</option>
+              <option value="Classical">Classical</option>
+              <option value="Blues">Blues</option>
+              <option value="Ambient">Ambient</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="editDuration">Duration (Seconds) *</label>
+            <input type="number" id="editDuration" class="neu-input" min="10" required>
+          </div>
+
+          <div class="form-group">
+            <label class="neu-label" for="editYear">Release Year</label>
+            <input type="number" id="editYear" class="neu-input" min="1900" max="2099">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="neu-label" for="editAudioUrl">Audio URL</label>
+            <input type="url" id="editAudioUrl" class="neu-input">
+          </div>
+
+          <div class="form-group full-width">
+            <button type="submit" class="neu-btn neu-btn-primary btn-block">Update Song</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastNotification" class="neu-toast" role="alert"></div>
+
+  <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}"></script>
+</body>
+</html>
+

@@ -1,0 +1,121 @@
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px 60px;
+  background: radial-gradient(ellipse at 50% 0%, #6b1115 0%, var(--bg) 70%);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-container {
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  margin-bottom: 16px;
+  transition: var(--t-spring);
+}
+.logo-container:hover  { transform: scale(1.07) rotate(2deg); }
+.logo-container:active { transform: scale(.96); }
+.logo-container:focus-visible {
+  outline: 2px solid var(--amber);
+  border-radius: 50%;
+}
+
+.brand-logo-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 26px rgba(0,0,0,.75));
+  display: block;
+  transition: filter .3s ease;
+}
+.logo-container:hover .brand-logo-img {
+  filter: drop-shadow(0 12px 28px rgba(224,159,62,.4));
+}
+
+.brand-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--cream);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.brand-tagline {
+  font-size: .9rem;
+  color: var(--amber);
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 34px 30px 30px;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: var(--bg);
+  padding: 5px;
+  border-radius: var(--r-sm);
+  box-shadow: var(--neu-in);
+  margin-bottom: 26px;
+}
+
+.tab-btn {
+  background: transparent;
+  box-shadow: none;
+  color: var(--cream-40);
+  padding: 9px;
+  border-radius: var(--r-xs);
+  font-size: .88rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--t);
+}
+.tab-btn.active {
+  background: var(--surface-2);
+  color: var(--cream);
+  box-shadow: var(--neu-sm);
+}
+.tab-btn:hover:not(.active) { color: var(--amber); }
+
+.auth-footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--cream-15);
+}
+
+.quick-fill-btn {
+  background: none;
+  border: none;
+  color: var(--cream-40);
+  font-size: .78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color .2s;
+  text-align: center;
+  font-family: inherit;
+}
+.quick-fill-btn:hover { color: var(--amber); }
+
+@media (max-width: 480px) {
+  .auth-card { padding: 24px 18px; }
+  .brand-title { font-size: 2rem; }
+  .brand-logo-img { width: 120px; height: 120px; }
+}
